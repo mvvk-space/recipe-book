@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE_KITCHEN_ARCHIVE</title>
+    <!-- Importing High-End Serif Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* WARM LUXURY PALETTE */
+            --bg-color: #F4F1EA;         /* Bone / Cream */
+            --card-bg: #FFFEFC;          /* Paper White */
+            --text-main: #2B2626;        /* Soft Charcoal */
+            --text-muted: #6b635e;
+            --accent: #A65D46;           /* Terracotta */
+            --border: 1px solid #Cdc9c0; /* Thin, refined border */
+            --shadow: 0px 10px 30px -10px rgba(43, 38, 38, 0.08);
+            
+            --font-display: 'Playfair Display', serif;
+            --font-body: 'Lora', serif;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 40px;
+            font-family: var(--font-body);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            overflow: hidden;
+        }
+
+        /* HEADER AREA */
+        header {
+            background: var(--bg-color);
+            border-bottom: var(--border);
+            padding: 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-shrink: 0;
+        }
+
+        h1 {
+            margin: 0;
+            font-family: var(--font-display);
+            text-transform: uppercase;
+            font-size: 2rem;
+            letter-spacing: 0.05em;
+            font-weight: 400;
+        }
+
+        .meta-tag {
+            font-size: 0.85rem;
+            font-style: italic;
+            opacity: 0.7;
+        }
+
+        /* NAVIGATION TABS */
+        nav.category-tabs {
+            display: flex;
+            background: var(--bg-color);
+            padding: 20px 0 10px 0;
+            gap: 40px;
+            border-bottom: var(--border);
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            cursor: pointer;
+            color: var(--text-main);
+            opacity: 0.5;
+            padding: 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover { opacity: 1; }
+        .tab-btn.active { opacity: 1; font-style: italic; }
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: var(--accent);
+        }
+
+        /* MARQUEE CONTAINER */
+        .marquee-container {
+            border-bottom: var(--border);
+            background: var(--card-bg);
+            color: var(--text-main);
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .marquee-track {
+            display: inline-block;
+            animation: scroll 45s linear infinite;
+            padding-left: 100%;
+        }
+
+        .marquee-link {
+            display: inline-block;
+            font-family: var(--font-display);
+            font-size: 1rem;
+            color: var(--text-main);
+            margin-right: 60px;
+            text-transform: uppercase;
+            cursor: pointer;
+            letter-spacing: 0.05em;
+            transition: color 0.3s ease;
+        }
+
+        .marquee-link:hover { color: var(--accent); font-style: italic; }
+        .marquee-link::after {
+            content: '♦';
+            margin-left: 60px;
+            font-size: 0.6rem;
+            color: var(--accent);
+            opacity: 0.5;
+            vertical-align: middle;
+        }
+
+        /* MAIN VIEWPORT / RECIPE CARD */
+        .viewport {
+            flex-grow: 1;
+            background: var(--card-bg);
+            position: relative;
+            margin-top: 20px;
+            box-shadow: var(--shadow);
+            border: var(--border);
+            overflow-y: auto; /* Allow scrolling inside the card */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Custom Scrollbar for elegance */
+        .viewport::-webkit-scrollbar { width: 6px; }
+        .viewport::-webkit-scrollbar-thumb { background: #E0DDD5; }
+
+        /* RECIPE CONTENT STYLES */
+        .recipe-article {
+            display: none; /* Hidden by default */
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            height: 100%;
+        }
+        .recipe-article.active {
+            display: flex;
+            flex-direction: column;
+            opacity: 1;
+        }
+
+        .recipe-hero {
+            height: 40%;
+            min-height: 250px;
+            width: 100%;
+            object-fit: cover;
+            border-bottom: var(--border);
+            filter: sepia(20%) contrast(90%); /* Vintage feel */
+        }
+
+        .recipe-body {
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .recipe-meta h2 {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            margin: 0 0 20px 0;
+            font-weight: 400;
+            line-height: 1.1;
+        }
+
+        .ingredients-box {
+            border-top: 1px solid var(--accent);
+            padding-top: 20px;
+        }
+
+        .ingredients-box h3, .method-box h3 {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 15px;
+            color: var(--accent);
+        }
+
+        ul.ing-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            color: var(--text-muted);
+        }
+
+        ul.ing-list li {
+            border-bottom: 1px dashed #E0DDD5;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        .method-text {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--text-main);
+        }
+
+        .method-text p { margin-bottom: 20px; }
+
+        /* EMPTY STATE */
+        .empty-state {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--accent);
+            opacity: 0.5;
+            font-style: italic;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 800px) {
+            .recipe-body { grid-template-columns: 1fr; gap: 30px; padding: 20px; }
+            h1 { font-size: 1.5rem; }
+            .recipe-meta h2 { font-size: 2rem; }
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>The Kitchen Archive</h1>
+        <div class="meta-tag">Est. 2025 • Volume I</div>
+    </header>
+
+    <nav class="category-tabs">
+        <button class="tab-btn active" onclick="switchCategory('drinks', this)">Apéritifs & Drinks</button>
+        <button class="tab-btn" onclick="switchCategory('savory', this)">Savory Provisions</button>
+        <button class="tab-btn" onclick="switchCategory('sweets', this)">Confections & Sweets</button>
+    </nav>
+
+    <div class="marquee-container">
+        <div class="marquee-track" id="marquee-track"></div>
+    </div>
+
+    <main class="viewport">
+        <!-- Empty State -->
+        <div id="empty-view" class="empty-state">Select a recipe from the menu above...</div>
+
+        <!-- Recipe Content Template -->
+        <article id="recipe-view" class="recipe-article">
+            <img id="r-image" class="recipe-hero" src="" alt="Recipe Image">
+            <div class="recipe-body">
+                <div class="left-col">
+                    <div class="recipe-meta">
+                        <h2 id="r-title">Title</h2>
+                    </div>
+                    <div class="ingredients-box">
+                        <h3>Ingredients</h3>
+                        <ul id="r-ingredients" class="ing-list"></ul>
+                    </div>
+                </div>
+                <div class="right-col method-box">
+                    <h3>Preparation</h3>
+                    <div id="r-method" class="method-text"></div>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <script>
+        // RICH DATA STRUCTURE
+        const MENU_DATA = {
+            drinks: [
+                { 
+                    id: 'd1', 
+                    name: "Smoked Old Fashioned", 
+                    img: "https://images.unsplash.com/photo-1597075687490-8f673c6c17f6?q=80&w=2787&auto=format&fit=crop",
+                    ingredients: ["2 oz Bourbon Whiskey", "1 Sugar Cube", "3 Dashes Angostura Bitters", "Orange Peel", "Hickory Smoke"],
+                    method: "<p>Place the sugar cube in an Old Fashioned glass. Wet it with bitters and a splash of water. Muddle until dissolved.</p><p>Add a large ice cube and pour in the bourbon. Stir gently for 20 seconds to chill and dilute.</p><p>Express the oil of an orange peel over the glass and drop it in. If smoking, use a smoking gun with hickory chips and cover for 30 seconds before serving.</p>"
+                },
+                { 
+                    id: 'd2', 
+                    name: "Rosemary Gin Fizz", 
+                    img: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=2787&auto=format&fit=crop",
+                    ingredients: ["2 oz Dry Gin", "1 oz Lemon Juice", "0.5 oz Rosemary Syrup", "Egg White", "Soda Water"],
+                    method: "<p>Combine gin, lemon juice, syrup, and egg white in a shaker without ice. Dry shake vigorously for 15 seconds.</p><p>Add ice and shake again until well-chilled. Strain into a highball glass.</p><p>Top slowly with soda water to create a foam head. Garnish with a fresh rosemary sprig.</p>"
+                },
+                { 
+                    id: 'd3', 
+                    name: "Spiced Mulled Cider", 
+                    img: "https://images.unsplash.com/photo-1512102438733-b3a4e82f6310?q=80&w=2787&auto=format&fit=crop",
+                    ingredients: ["1L Apple Cider", "2 Cinnamon Sticks", "4 Cloves", "1 Star Anise", "Orange Slices"],
+                    method: "<p>Pour cider into a large saucepan over medium heat.</p><p>Add cinnamon, cloves, star anise, and orange slices. Bring to a simmer, then reduce heat to low.</p><p>Let steep for at least 20 minutes. Serve warm in mugs, garnished with extra cinnamon sticks.</p>"
+                }
+            ],
+            savory: [
+                { 
+                    id: 's1', 
+                    name: "Wild Mushroom Risotto", 
+                    img: "https://images.unsplash.com/photo-1476124369491-e7addf5db371?q=80&w=2940&auto=format&fit=crop",
+                    ingredients: ["300g Arborio Rice", "500g Wild Mushrooms", "1L Vegetable Stock", "1/2 cup White Wine", "Parmesan Cheese", "Thyme"],
+                    method: "<p>Sauté mushrooms in butter until browned. Set aside.</p><p>In the same pan, toast the rice for 2 minutes. Deglaze with white wine.</p><p>Add warm stock one ladle at a time, stirring constantly until absorbed. This releases the starch for creaminess.</p><p>Stir in the mushrooms, parmesan, and fresh thyme. Serve immediately.</p>"
+                },
+                { 
+                    id: 's2', 
+                    name: "Rustic Heirloom Tart", 
+                    img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=2881&auto=format&fit=crop",
+                    ingredients: ["Puff Pastry Sheet", "3 Heirloom Tomatoes", "Ricotta Cheese", "Basil Pesto", "Olive Oil"],
+                    method: "<p>Preheat oven to 400°F (200°C). Roll out puff pastry on a baking sheet.</p><p>Spread a layer of ricotta mixed with pesto over the pastry, leaving a 1-inch border.</p><p>Slice tomatoes thinly and arrange them over the cheese. Drizzle with olive oil and salt.</p><p>Bake for 25 minutes until pastry is golden and puffed.</p>"
+                },
+                { 
+                    id: 's3', 
+                    name: "Duck Confit", 
+                    img: "https://images.unsplash.com/photo-1628268909376-e8c44bb3153f?q=80&w=2940&auto=format&fit=crop",
+                    ingredients: ["4 Duck Legs", "Duck Fat", "Coarse Salt", "Garlic Cloves", "Thyme"],
+                    method: "<p>Cure the duck legs in salt, garlic, and thyme for 24 hours in the fridge.</p><p>Rinse the legs and pat dry. Submerge in melted duck fat in a baking dish.</p><p>Slow cook at 225°F (110°C) for 3-4 hours until the meat is tender.</p><p>Crisp the skin in a hot pan before serving.</p>"
+                }
+            ],
+            sweets: [
+                { 
+                    id: 'sw1', 
+                    name: "Dark Chocolate Ganache", 
+                    img: "https://images.unsplash.com/photo-1511381939415-e44015466834?q=80&w=2872&auto=format&fit=crop",
+                    ingredients: ["200g 70% Dark Chocolate", "200ml Heavy Cream", "Sea Salt", "Raspberries"],
+                    method: "<p>Chop the chocolate finely and place in a heatproof bowl.</p><p>Heat the cream until just simmering. Pour over the chocolate and let sit for 5 minutes.</p><p>Gently whisk from the center outwards until glossy and emulsified.</p><p>Pour into tart shells or ramekins. Chill for 2 hours. Top with sea salt and raspberries.</p>"
+                },
+                { 
+                    id: 'sw2', 
+                    name: "Honey Lavender Cake", 
+                    img: "https://images.unsplash.com/photo-1519340333755-56e9c1d04579?q=80&w=2940&auto=format&fit=crop",
+                    ingredients: ["2 cups Flour", "1 cup Sugar", "1/2 cup Honey", "1 tbsp Dried Lavender", "3 Eggs", "Butter"],
+                    method: "<p>Infuse the butter with lavender by melting them together, then cooling.</p><p>Beat eggs and sugar until pale. Drizzle in the honey and lavender butter.</p><p>Fold in dry ingredients gently. Pour into a greased cake tin.</p><p>Bake at 350°F (175°C) for 35-40 minutes. Glaze with honey while warm.</p>"
+                }
+            ]
+        };
+
+        const track = document.getElementById('marquee-track');
+        const emptyView = document.getElementById('empty-view');
+        const recipeView = document.getElementById('recipe-view');
+
+        // Elements to populate
+        const rTitle = document.getElementById('r-title');
+        const rImage = document.getElementById('r-image');
+        const rIng = document.getElementById('r-ingredients');
+        const rMethod = document.getElementById('r-method');
+
+        // Initialize view
+        window.onload = () => switchCategory('drinks', document.querySelector('.tab-btn'));
+
+        // SWITCH CATEGORY (UPDATES MARQUEE)
+        function switchCategory(category, btnElement) {
+            // Update Tab UI
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            if(btnElement) btnElement.classList.add('active');
+
+            // Reset Marquee
+            track.innerHTML = '';
+            
+            // Build Marquee Items
+            const items = MENU_DATA[category];
+            
+            // Double the list for infinite scroll smoothness
+            const displayItems = [...items, ...items, ...items]; 
+
+            displayItems.forEach(item => {
+                const link = document.createElement('a');
+                link.className = 'marquee-link';
+                link.innerText = item.name;
+                // We pass the full item object to the loader
+                link.onclick = () => loadRecipe(item);
+                track.appendChild(link);
+            });
+        }
+
+        // LOAD RECIPE (UPDATES VIEWPORT)
+        function loadRecipe(item) {
+            // 1. Hide current content to fade out
+            recipeView.classList.remove('active');
+            emptyView.style.display = 'none';
+
+            setTimeout(() => {
+                // 2. Populate Data
+                rTitle.innerText = item.name;
+                rImage.src = item.img;
+                rMethod.innerHTML = item.method;
+                
+                // Clear and Populate Ingredients
+                rIng.innerHTML = '';
+                item.ingredients.forEach(ing => {
+                    const li = document.createElement('li');
+                    li.innerText = ing;
+                    rIng.appendChild(li);
+                });
+
+                // 3. Show content (Fade in)
+                recipeView.classList.add('active');
+            }, 300);
+        }
+
+        // Pause animation on hover
+        track.addEventListener('mouseenter', () => track.style.animationPlayState = 'paused');
+        track.addEventListener('mouseleave', () => track.style.animationPlayState = 'running');
+    </script>
+</body>
+</html>
